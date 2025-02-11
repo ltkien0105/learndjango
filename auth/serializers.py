@@ -32,5 +32,5 @@ class LoginSerializer(serializers.Serializer):
         
         user = authenticate(username=username, password=password)
         if not user:
-            raise AuthenticationFailed('Invalid username or password')
+            raise AuthenticationFailed
         return super().validate(attrs)
