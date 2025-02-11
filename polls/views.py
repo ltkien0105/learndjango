@@ -13,4 +13,4 @@ class Categories(APIView):
         if (serializer.is_valid()):
             serializer.save()
             
-        return Response("Category created", status=status.HTTP_201_CREATED)
+        return Response({"status": True, "message": "Category created"}, status=status.HTTP_201_CREATED)
