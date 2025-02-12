@@ -40,8 +40,8 @@ class Login(APIView):
                     "last_name": user.last_name,
                 }}, status=status.HTTP_200_OK)
                 access, refresh = get_token(user)
-                response.set_cookie('access_token', value=access, secure=False, httponly=True)
-                response.set_cookie('refresh_token', value=refresh, secure=False, httponly=True)
+                response.set_cookie('access_token', value=access, secure=True, httponly=True, samesite='none')
+                response.set_cookie('refresh_token', value=refresh, secure=True, httponly=True, samesite='none')
                 return response
             else:
                 return Response({"status": False, "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
