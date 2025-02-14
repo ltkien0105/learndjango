@@ -36,6 +36,7 @@ class Login(APIView):
                     raise AuthenticationFailed
                 
                 response = Response({"status": True, "message": "Login successfully", "data": {
+                    "id": user.id,
                     "username": user.username,
                     "email": user.email,
                     "first_name": user.first_name,
