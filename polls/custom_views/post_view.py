@@ -9,18 +9,17 @@ class PostListCreateView(ListCreateAPIView):
     serializer_class = PostSerializer
     
     def get_queryset(self):
-        thread_id = self.request.query_params.get('thread')
-        if thread_id:
-            return Post.objects.filter(thread_id=thread_id)
+        category_id = self.request.query_params.get('category_id')
+        if category_id:
+            return Post.objects.filter(category_id=category_id)
 
         return Post.objects.all()
-
+    
     def post(self, request, *args, **kwargs):
-        if (not request.user.is_authenticated):
-            return Response(status=HTTP_401_UNAUTHORIZED)
         return super().post(request, *args, **kwargs)
     
 class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [CookieJWTAuthentication]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     
@@ -33,6 +32,4 @@ class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         if (not request.user.is_authenticated):
             return Response(status=HTTP_401_UNAUTHORIZED)
         return super().destroy(request, *args, **kwargs)
-    
-    
     

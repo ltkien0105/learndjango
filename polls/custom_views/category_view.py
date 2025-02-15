@@ -11,9 +11,9 @@ class CategoryListCreateView(ListCreateAPIView):
     serializer_class = CategorySerializer
     
     def get_queryset(self):
-        is_get_thread_count = self.request.query_params.get('thread_count')
-        if is_get_thread_count and is_get_thread_count == '1':
-            return Category.objects.annotate(thread_count=Count('thread'))
+        is_get_post_count = self.request.query_params.get('post_count')
+        if is_get_post_count and is_get_post_count == '1':
+            return Category.objects.annotate(post_count=Count('post'))
 
         return Category.objects.all()
     

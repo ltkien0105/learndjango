@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Thread, Post
+from .models import Category, Comment, Post
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -10,34 +10,34 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    thread_count = serializers.IntegerField(read_only=True)
+    post_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = Category
-        fields = ['id', 'category_name', 'description', 'thread_count']
+        fields = ['id', 'category_name', 'description', 'post_count']
         
-class PostSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    thread = serializers.PrimaryKeyRelatedField(queryset=Thread.objects.all(), write_only=True)
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all(), write_only=True)
     class Meta:
-        model = Post
-        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'thread']
+        model = Comment
+        fields = ['id', 'content', 'created_at', 'updated_at', 'user', 'post']
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['user'] = UserInfoSerializer(instance.user).data
-        representation['thread'] = instance.thread.id
+        representation['post'] = instance.post.id
         return representation
         
-class ThreadSerializer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), write_only=True)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    posts = PostSerializer(many=True, read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Thread
-        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'posts']
+        model = Post
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'comments']
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
