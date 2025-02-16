@@ -2,8 +2,9 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.exceptions import ParseError
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import ParseError, AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -49,9 +50,13 @@ class Logout(APIView):
         return Response({"message": "Successfully logged out!"}, status=status.HTTP_200_OK)
      
 class UserInfo(RetrieveUpdateAPIView):
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+
     serializer_class = UserInfoSerializer
     
     def get(self, request):
+        print(request.user.is_authenticated)
         if request.user.is_authenticated:
             serializer = UserInfoSerializer(request.user)
             return Response(serializer.data)
