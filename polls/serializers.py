@@ -4,9 +4,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(read_only=True)
+    avatarBase64 = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'avatarBase64']
 
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)

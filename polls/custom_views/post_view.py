@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from ..serializers import PostSerializer
 from ..models import Post
-from auth.authentication import CookieJWTAuthentication
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class PostListCreateView(ListCreateAPIView):
     serializer_class = PostSerializer
@@ -16,10 +17,13 @@ class PostListCreateView(ListCreateAPIView):
         return Post.objects.all()
     
     def post(self, request, *args, **kwargs):
+        self.authentication_classes = [SessionAuthentication]
+        self.permission_classes = [IsAuthenticated]
         return super().post(request, *args, **kwargs)
     
 class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [CookieJWTAuthentication]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     

@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from ..serializers import CategorySerializer
 from ..models import Category
-from auth.authentication import CookieJWTAuthentication
 
 class CategoryListCreateView(ListCreateAPIView):
     serializer_class = CategorySerializer
@@ -23,7 +22,6 @@ class CategoryListCreateView(ListCreateAPIView):
         return super().post(request, *args, **kwargs)
     
 class CategoryRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [CookieJWTAuthentication]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     

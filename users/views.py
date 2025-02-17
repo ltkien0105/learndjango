@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView
-from polls.serializers import PostSerializer, CommentSerializer
+from rest_framework.generics import ListAPIView, UpdateAPIView
+from polls.serializers import PostSerializer, CommentSerializer, UserInfoSerializer
 from polls.models import Post, Comment
+from .models import User
 
 from dotenv import load_dotenv
 import os
@@ -28,12 +29,19 @@ class UserComments(ListAPIView):
         queryset = Comment.objects.filter(user=user_id)
         return queryset
     
-class UserImagePreview():
-    pass
-    
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
     secure=True
 )
+
+class UserUpdateProfile(UpdateAPIView):
+    serializer_class = UserInfoSerializer
+    queryset = User.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        user_id = kwargs.get('pk')
+        cloudinary.uploader.upload(request.data['avatarBase64'])
+        # return super().update(request, *args, **kwargs)
+    
