@@ -23,19 +23,12 @@ class Login(APIView):
             serializer = LoginSerializer(data=request.data)
             if (serializer.is_valid()):
                 user = authenticate(request=request, username=serializer.validated_data.get('username'), password=serializer.validated_data.get('password'))
-                
                 if not user:
                     raise AuthenticationFailed
                 
                 login(request, user)
-                
-                return Response({"status": True, "message": "Login successfully", "data": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                }}, status=status.HTTP_200_OK)
+                user_serializer = UserInfoSerializer(user)
+                return Response({"status": True, "message": "Login successfully", "data": user_serializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({"status": False, "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
         except AuthenticationFailed:

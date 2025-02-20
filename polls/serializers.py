@@ -6,10 +6,9 @@ User = get_user_model()
 class UserInfoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(read_only=True)
-    avatarBase64 = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'avatarBase64']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar']
 
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
