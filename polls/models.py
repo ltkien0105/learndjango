@@ -15,6 +15,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    likes = models.IntegerField(default=0)
     
     def __str__(self):
         return self.title

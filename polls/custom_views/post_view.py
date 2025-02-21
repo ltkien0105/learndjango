@@ -1,10 +1,12 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from ..serializers import PostSerializer
 from ..models import Post
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+from django.db.models import Count
 
 class PostListCreateView(ListCreateAPIView):
     serializer_class = PostSerializer
@@ -25,7 +27,12 @@ class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
+    
+    def get_queryset(self):
+        return Post.objects.annotate(comment_count=Count('comments'))
+    
+    def get_serializer_context(self):
+        return {'request': self.request}
     
     def update(self, request, *args, **kwargs):
         if (not request.user.is_authenticated):
@@ -36,4 +43,6 @@ class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         if (not request.user.is_authenticated):
             return Response(status=HTTP_401_UNAUTHORIZED)
         return super().destroy(request, *args, **kwargs)
+    
+# class PostUpdateLikeCount()
     

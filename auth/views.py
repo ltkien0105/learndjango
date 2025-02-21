@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ParseError, AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
 
 from django.contrib.auth import authenticate, login, logout
@@ -30,11 +29,11 @@ class Login(APIView):
                 user_serializer = UserInfoSerializer(user)
                 return Response({"status": True, "message": "Login successfully", "data": user_serializer.data}, status=status.HTTP_200_OK)
             else:
-                return Response({"status": False, "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
+                return Response({"status": False, "message": serializer.errors}, status.HTTP_400_BAD_REQUEST)
         except AuthenticationFailed:
-            return Response({"status": False, "errors": "Invalid username or password"}, status.HTTP_401_UNAUTHORIZED)
+            return Response({"status": False, "message": "Invalid username or password"}, status.HTTP_401_UNAUTHORIZED)
         except ParseError:
-            return Response({"status": False, "errors": "Invalid JSON"}, status.HTTP_400_BAD_REQUEST)
+            return Response({"status": False, "message": "Invalid JSON"}, status.HTTP_400_BAD_REQUEST)
         
 class Logout(APIView):
     def post(self, request):

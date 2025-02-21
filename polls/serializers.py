@@ -35,15 +35,28 @@ class PostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), write_only=True)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
+    comment_count = serializers.IntegerField(read_only=True)
+    likes = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'comments']
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'comment_count', 'likes']
         
     def to_representation(self, instance):
+        request = self.context.get('request')
+        is_include_comments = request.query_params.get('include_comments') if request else None
+        
         representation = super().to_representation(instance)
         representation['category'] = CategorySerializer(instance.category).data
         representation['user'] = UserInfoSerializer(instance.user).data
+        
+        if is_include_comments and is_include_comments == '1':
+            representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+            
         return representation
+    
+# class PostLikeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Post
+#         fields = []
     

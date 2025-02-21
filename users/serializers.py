@@ -8,10 +8,14 @@ class UserAvatarSerializer(serializers.ModelSerializer):
         model = User
         fields = ['avatar_dataurl']
         
-        
-        
 class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
+    username = serializers.CharField(read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'date_joined']
+        
+class UserPasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(min_length = 8)
+    new_password = serializers.CharField(min_length = 8)
