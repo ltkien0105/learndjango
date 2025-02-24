@@ -37,10 +37,11 @@ class PostSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     comment_count = serializers.IntegerField(read_only=True)
     likes = serializers.IntegerField(read_only=True)
+    liked = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'comment_count', 'likes']
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'category', 'user', 'comment_count', 'likes', 'liked']
         
     def to_representation(self, instance):
         request = self.context.get('request')
@@ -51,12 +52,12 @@ class PostSerializer(serializers.ModelSerializer):
         representation['user'] = UserInfoSerializer(instance.user).data
         
         if is_include_comments and is_include_comments == '1':
-            representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+            representation['comments'] = CommentSerializer(instance.comments.order_by('-created_at').all(), many=True).data
             
         return representation
     
-# class PostLikeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Post
-#         fields = []
+class PostLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['likes']
     

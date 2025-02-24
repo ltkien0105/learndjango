@@ -53,7 +53,7 @@ class UserUpdateAvatar(UpdateAPIView):
     def update(self, request, *args, **kwargs):
         user_id = kwargs.get('pk')
         user = User.objects.get(pk=user_id)
-        uploadResult = cloudinary.uploader.upload(
+        upload_result = cloudinary.uploader.upload(
             request.data['avatar_dataurl'],
             folder = 'avatars',
             public_id = f"avatar_{user.username}",
@@ -62,10 +62,10 @@ class UserUpdateAvatar(UpdateAPIView):
                 {"width": 100, "height": 100, "crop": "fill"}
             ]
         )
-        user.avatar = uploadResult['secure_url']
+        user.avatar = upload_result['secure_url']
         user.save()
         
-        return Response({'status': True, 'message': 'Update avatar successfully', 'data': {'secure_url': uploadResult['secure_url']} }, status=HTTP_200_OK)
+        return Response({'status': True, 'message': 'Update avatar successfully', 'data': {'secure_url': upload_result['secure_url']} }, status=HTTP_200_OK)
     
 class UserChangePassword(UpdateAPIView):
     authentication_classes = [SessionAuthentication]
