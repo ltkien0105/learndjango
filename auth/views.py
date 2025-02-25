@@ -48,7 +48,6 @@ class UserInfo(RetrieveUpdateAPIView):
     serializer_class = UserInfoSerializer
     
     def get(self, request):
-        print(request.user.is_authenticated)
         if request.user.is_authenticated:
             serializer = UserInfoSerializer(request.user)
             return Response(serializer.data)

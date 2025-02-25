@@ -3,6 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.pagination import PageNumberPagination
 from ..serializers import PostSerializer, CommentSerializer
 from ..models import Post, UserLike, Comment
 from rest_framework.authentication import SessionAuthentication
@@ -98,5 +99,15 @@ class PostGetComments(APIView):
         comments = Comment.objects.filter(post=pk).order_by("-created_at")
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
+    
+class PostSearch(APIView, PageNumberPagination):
+    page_size_query_param = 'page_size'
+    
+    def get(self, request):
+        query = request.query_params.get('q', '')
+        posts = Post.objects.filter(title__icontains=query)
+        paginated_posts = self.paginate_queryset(posts, request)
+        serializer = PostSerializer(paginated_posts, many=True)
+        return self.get_paginated_response(serializer.data)
         
     
